@@ -1,4 +1,4 @@
-package cis2206.util;
+package team4.util;
 
 import java.util.Scanner;
 

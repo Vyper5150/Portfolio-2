@@ -1,4 +1,4 @@
-package cis2206.model.datastore.file;
+package team4.model.datastore.file;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -14,23 +14,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import cis2206.model.Employee;
-import cis2206.model.IEmployeeDAO;
+import team4.model.VideoGame;
+import team4.model.IVideoGameDAO;
 
 /**
- * EmployeeDAO (Data Access Object) handles all interactions with the data
- * store. This version uses a file to store the data. It is not multiuser safe.
- *
- * @author John Phillips
- * @version 20160920
+ * @author Team Four
+ * @version 201610
  *
  */
-public class EmployeeDAO implements IEmployeeDAO {
+public class VideoGameDAO implements IVideoGameDAO {
 
     protected String fileName = null;
-    protected final List<Employee> myList;
+    protected final List<VideoGame> myList;
 
-    public EmployeeDAO() {
+    public VideoGameDAO() {
         Properties props = new Properties();
         try {
             props.load(new FileInputStream("res/file/db.properties"));
@@ -53,34 +50,34 @@ public class EmployeeDAO implements IEmployeeDAO {
     }
 
     @Override
-    public void createRecord(Employee employee) {
-        myList.add(employee);
+    public void createRecord(VideoGame videogame) {
+        myList.add(videogame);
         writeList();
     }
 
     @Override
-    public Employee retrieveRecordById(int id) {
-        for (Employee employee : myList) {
-            if (employee.getEmpId() == id) {
-                return employee;
+    public VideoGame retrieveRecordById(int id) {
+        for (VideoGame videogame : myList) {
+            if (videogame.getId() == id) {
+                return videogame;
             }
         }
         return null;
     }
 
     @Override
-    public List<Employee> retrieveAllRecords() {
+    public List<VideoGame> retrieveAllRecords() {
         return myList;
     }
 
     @Override
-    public void updateRecord(Employee updatedEmployee) {
-        for (Employee employee : myList) {
-            if (employee.getEmpId() == updatedEmployee.getEmpId()) {
-                employee.setLastName(updatedEmployee.getLastName());
-                employee.setFirstName(updatedEmployee.getFirstName());
-                employee.setHomePhone(updatedEmployee.getHomePhone());
-                employee.setSalary(updatedEmployee.getSalary());
+    public void updateRecord(VideoGame updatedVideoGame) {
+        for (VideoGame employee : myList) {
+            if (employee.getId() == updatedVideoGame.getId()) {
+                employee.setName(updatedVideoGame.getName());
+                employee.setDeveloper(updatedVideoGame.getDeveloper());
+                employee.setConsole(updatedVideoGame.getConsole());
+                employee.setRating(updatedVideoGame.getRating());
                 break;
             }
         }
@@ -89,9 +86,9 @@ public class EmployeeDAO implements IEmployeeDAO {
 
     @Override
     public void deleteRecord(int id) {
-        for (Employee employee : myList) {
-            if (employee.getEmpId() == id) {
-                myList.remove(employee);
+        for (VideoGame videogame : myList) {
+            if (videogame.getId() == id) {
+                myList.remove(videogame);
                 break;
             }
         }
@@ -99,8 +96,8 @@ public class EmployeeDAO implements IEmployeeDAO {
     }
 
     @Override
-    public void deleteRecord(Employee employee) {
-        myList.remove(employee);
+    public void deleteRecord(VideoGame videogame) {
+        myList.remove(videogame);
         writeList();
     }
 
@@ -111,12 +108,12 @@ public class EmployeeDAO implements IEmployeeDAO {
             while ((line = reader.readLine()) != null) {
                 String[] data = line.split(",");
                 int id = Integer.parseInt(data[0]);
-                String last = data[1];
-                String first = data[2];
-                String homePhone = data[3];
-                double salary = Double.parseDouble(data[4]);
-                Employee employee = new Employee(id, last, first, homePhone, salary);
-                myList.add(employee);
+                String name = data[1];
+                String developer = data[2];
+                String console = data[3];
+                String rating = data[4];
+                VideoGame videogame = new VideoGame(id, name, developer, console, rating);
+                myList.add(videogame);
             }
         } catch (IOException ioe) {
             System.out.println("Read file error with " + ioe.getMessage());
@@ -126,13 +123,13 @@ public class EmployeeDAO implements IEmployeeDAO {
     private void writeList() {
         Path path = Paths.get(fileName);
         try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
-            for (Employee employee : myList) {
+            for (VideoGame videogame : myList) {
                 writer.write(String.format("%d,%s,%s,%s,%.2f\n",
-                        employee.getEmpId(),
-                        employee.getLastName(),
-                        employee.getFirstName(),
-                        employee.getHomePhone(),
-                        employee.getSalary()));
+                        videogame.getId(),
+                        videogame.getName(),
+                        videogame.getDeveloper(),
+                        videogame.getConsole(),
+                        videogame.getRating()));
             }
         } catch (IOException ioe) {
             System.out.println("Write file error with " + ioe.getMessage());
@@ -143,13 +140,13 @@ public class EmployeeDAO implements IEmployeeDAO {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        for (Employee employee : myList) {
+        for (VideoGame videogame : myList) {
             sb.append(String.format("%5d : %s, %s, %s, %.2f\n",
-                    employee.getEmpId(),
-                    employee.getLastName(),
-                    employee.getFirstName(),
-                    employee.getHomePhone(),
-                    employee.getSalary()));
+                    videogame.getId(),
+                    videogame.getName(),
+                    videogame.getDeveloper(),
+                    videogame.getConsole(),
+                    videogame.getRating()));
         }
 
         return sb.toString();

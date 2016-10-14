@@ -1,4 +1,4 @@
-package cis2206.model.datastore.mysql;
+package team4.model.datastore.mysql;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -7,34 +7,31 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import cis2206.model.Employee;
-import cis2206.model.IEmployeeDAO;
+import team4.model.VideoGame;
+import team4.model.IVideoGameDAO;
 
 /**
- * EmployeeDAO (Data Access Object) handles all interactions with the data
- * store. This version uses a MySQL database to store the data. It is multiuser
- * safe.
- *
- * @author John Phillips
- * @version 20160920
+ * @author Team Four
+ * @version 201610
  *
  */
-public class EmployeeDAO implements IEmployeeDAO {
+public class VideoGameDAO implements IVideoGameDAO {
 
     protected final static boolean DEBUG = true;
 
     @Override
-    public void createRecord(Employee employee) {
-        final String QUERY = "insert into employee "
-                + "(empId, lastName, firstName, homePhone, salary) "
-                + "VALUES (null, ?, ?, ?, ?)";
+    public void createRecord(VideoGame videogame) {
+        final String QUERY = "Insert into videogame "
+                + "(id, name, developer, console, rating) "
+                + "VALUES (?, ?, ?, ?, ?)";
 
         try (Connection con = DBConnection.getConnection(); 
                 PreparedStatement stmt = con.prepareStatement(QUERY);) {
-            stmt.setString(1, employee.getLastName());
-            stmt.setString(2, employee.getFirstName());
-            stmt.setString(3, employee.getHomePhone());
-            stmt.setDouble(4, employee.getSalary());
+            stmt.setInt(1, videogame.getId());
+            stmt.setString(2, videogame.getName());
+            stmt.setString(3, videogame.getDeveloper());
+            stmt.setString(4, videogame.getConsole());
+            stmt.setString(5, videogame.getRating());
             if (DEBUG) {
                 System.out.println(stmt.toString());
             }
@@ -46,42 +43,37 @@ public class EmployeeDAO implements IEmployeeDAO {
     }
 
     @Override
-    public Employee retrieveRecordById(int id) {
-        final String QUERY = "select empId, lastName, firstName, homePhone, "
-                + "salary from employee where empId = " + id;
-        // final String QUERY = "select empId, lastName, firstName, homePhone,
-        // salary from employee where empId = ?";
-        Employee emp = null;
+    public VideoGame retrieveRecordById(int id) {
+        final String QUERY = "select * "
+                + "from videogame where id = " + id;
+        VideoGame game = null;
 
         try (Connection con = DBConnection.getConnection(); 
                 PreparedStatement stmt = con.prepareStatement(QUERY)) {
-            // stmt.setInt(1, id);
             if (DEBUG) {
                 System.out.println(stmt.toString());
             }
             ResultSet rs = stmt.executeQuery(QUERY);
-
             if (rs.next()) {
-                emp = new Employee(
-                        rs.getInt("empId"), 
-                        rs.getString("lastName"),
-                        rs.getString("firstName"),
-                        rs.getString("homePhone"), 
-                        rs.getDouble("salary"));
+                game = new VideoGame(
+                        rs.getInt("id"), 
+                        rs.getString("name"),
+                        rs.getString("developer"),
+                        rs.getString("console"), 
+                        rs.getString("rating"));
             }
         } catch (SQLException ex) {
             System.out.println("retrieveRecordById SQLException: " 
                     + ex.getMessage());
         }
 
-        return emp;
+        return game;
     }
 
     @Override
-    public List<Employee> retrieveAllRecords() {
-        final List<Employee> myList = new ArrayList<>();
-        final String QUERY = "select empId, lastName, firstName, homePhone, "
-                + "salary from employee";
+    public List<VideoGame> retrieveAllRecords() {
+         List<VideoGame> myList = new ArrayList<>();
+        final String QUERY = "select * from videogame";
 
         try (Connection con = DBConnection.getConnection(); 
                 PreparedStatement stmt = con.prepareStatement(QUERY)) {
@@ -91,12 +83,12 @@ public class EmployeeDAO implements IEmployeeDAO {
             ResultSet rs = stmt.executeQuery(QUERY);
 
             while (rs.next()) {
-                myList.add(new Employee(
-                        rs.getInt("empId"), 
-                        rs.getString("lastName"), 
-                        rs.getString("firstName"),
-                        rs.getString("homePhone"), 
-                        rs.getDouble("salary")));
+                myList.add(new VideoGame(
+                        rs.getInt("id"), 
+                        rs.getString("name"), 
+                        rs.getString("developer"),
+                        rs.getString("console"), 
+                        rs.getString("rating")));
             }
         } catch (SQLException ex) {
             System.out.println("retrieveAllRecords SQLException: " + ex.getMessage());
@@ -106,17 +98,17 @@ public class EmployeeDAO implements IEmployeeDAO {
     }
 
     @Override
-    public void updateRecord(Employee updatedEmployee) {
-        final String QUERY = "update employee set lastName=?, firstName=?, "
-                + "homePhone=?, salary=? where empId=?";
+    public void updateRecord(VideoGame updatedVideoGame) {
+        final String QUERY = "update videogame set name= ?, developer= ?, "
+                + "console= ?, rating= ? where id= ?";
 
         try (Connection con = DBConnection.getConnection(); 
                 PreparedStatement stmt = con.prepareStatement(QUERY)) {
-            stmt.setString(1, updatedEmployee.getLastName());
-            stmt.setString(2, updatedEmployee.getFirstName());
-            stmt.setString(3, updatedEmployee.getHomePhone());
-            stmt.setDouble(4, updatedEmployee.getSalary());
-            stmt.setInt(5, updatedEmployee.getEmpId());
+            stmt.setString(1, updatedVideoGame.getName());
+            stmt.setString(2, updatedVideoGame.getDeveloper());
+            stmt.setString(3, updatedVideoGame.getConsole());
+            stmt.setString(4, updatedVideoGame.getRating());
+            stmt.setInt(5, updatedVideoGame.getId());
             if (DEBUG) {
                 System.out.println(stmt.toString());
             }
@@ -128,7 +120,7 @@ public class EmployeeDAO implements IEmployeeDAO {
 
     @Override
     public void deleteRecord(int id) {
-        final String QUERY = "delete from employee where empId = ?";
+        final String QUERY = "delete from videogame where id = ?";
 
         try (Connection con = DBConnection.getConnection(); 
                 PreparedStatement stmt = con.prepareStatement(QUERY)) {
@@ -143,12 +135,12 @@ public class EmployeeDAO implements IEmployeeDAO {
     }
 
     @Override
-    public void deleteRecord(Employee employee) {
-        final String QUERY = "delete from employee where empId = ?";
+    public void deleteRecord(VideoGame videogame) {
+        final String QUERY = "delete from videogame where id = ?";
 
         try (Connection con = DBConnection.getConnection(); 
                 PreparedStatement stmt = con.prepareStatement(QUERY)) {
-            stmt.setInt(1, employee.getEmpId());
+            stmt.setInt(1, videogame.getId());
             if (DEBUG) {
                 System.out.println(stmt.toString());
             }
@@ -162,8 +154,8 @@ public class EmployeeDAO implements IEmployeeDAO {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        for (Employee employee : retrieveAllRecords()) {
-            sb.append(employee.toString()).append("\n");
+        for (VideoGame videogame : retrieveAllRecords()) {
+            sb.append(videogame.toString()).append("\n");
         }
 
         return sb.toString();

@@ -1,4 +1,4 @@
-package cis2206.model.datastore.mysql;
+package team4.model.datastore.mysql;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -8,12 +8,10 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 /**
- * Get a connection to the database. DBConnection is based on example code from
- * http://www.journaldev.com/2471/package com.journaldev.jdbc
+ * 
  *
- * @author John Phillips
- * @version 20151015
- *
+ * @author Team 4
+ * @version 201610
  */
 public class DBConnection {
 
