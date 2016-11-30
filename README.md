@@ -1,5 +1,5 @@
 # portfoliobootstrap 
-This website displays the student portfolio of work for a fictitous Jane Doe. It makes use of the bootstrap framework. 
+This website displays the student portfolio of work for Robert Shea. It makes use of the bootstrap framework. 
 The main file index.html is released to the public domain. 
 
 Follow these steps to use this repository (assumes a Linux / Apache2 server with public_html web folders and git):
